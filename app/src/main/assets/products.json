@@ -1,0 +1,72 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "iPhone X",
+      "description": "Its an iPhone new model from Apple Inc",
+      "regular_price": "200000",
+      "sale_price": "220000",
+      "product_photo": "https://www.91-img.com/pictures/apple-iphone-x-mobile-phone-large-1.jpg",
+      "colors": [
+        "white",
+        "black",
+        "grey"
+      ],
+      "stores": [
+        {
+          "storename": "aptronix",
+          "address1": "USA, California"
+        },
+        {
+          "storename": "aptronix",
+          "address1": "USA, California"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Pixel 2 XL",
+      "description": "Its an Pixel new model from Google Inc",
+      "regular_price": "18000",
+      "sale_price": "20000",
+      "product_photo": "https://www.android.com/static/2016/img/devices/phones/pixel/silver-1_w_1x.jpg",
+      "colors": [
+        "white",
+        "black",
+        "grey"
+      ],
+      "stores": [
+        {
+          "storename": "Havana",
+          "address1": "USA, California"
+        },
+        {
+          "storename": "matrix",
+          "address1": "USA, California"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Mi Mix 2",
+      "description": "Its an Xiaomi new model from MI Inc",
+      "regular_price": "2000",
+      "sale_price": "4000",
+      "product_photo": "https://images-na.ssl-images-amazon.com/images/I/71BfL%2BDsoPL._SY549_.jpg",
+      "colors": [
+        "black",
+        "grey"
+      ],
+      "stores": [
+        {
+          "storename": "Mexico",
+          "address1": "Mexico, USA"
+        },
+        {
+          "storename": "System matrix",
+          "address1": "USA, California"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ProductsAssignment</string>
+    <string name="action_settings">Settings</string>
+    <string name="show_product">Show Product</string>
+    <string name="create_product">Create Product</string>
+    <string name="create_product_one">Create Products From Json</string>
+    <string name="create_product_two">Create Product 2</string>
+    <string name="title_activity_create_products">CreateProductsActivity</string>
+</resources>
