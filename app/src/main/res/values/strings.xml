@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProductsAssignment</string>
+    <string name="app_name">Products Assignment</string>
     <string name="action_settings">Settings</string>
     <string name="show_product">Show Product</string>
     <string name="create_product">Create Product</string>
