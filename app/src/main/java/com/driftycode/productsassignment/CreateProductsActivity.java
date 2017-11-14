@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,8 +27,8 @@ import static com.driftycode.productsassignment.utils.Common.convertListToString
 public class CreateProductsActivity extends AppCompatActivity {
 
     private static final String TAG = "CreateProducts";
-    private Activity mActivity;
     Products productsArray;
+    private Activity mActivity;
     private ProductsDatabase database;
 
 
@@ -38,7 +36,7 @@ public class CreateProductsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_products);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mActivity = this;
 
@@ -49,7 +47,7 @@ public class CreateProductsActivity extends AppCompatActivity {
         // Loading productions from JSON dynamically
         loadProductsInfoFromJSON();
 
-        // Click listeners inline - since it doesn`t have too many click listeners to handle, i didn`t added any dependency Injection libs
+        // Click listeners inline - since it does`t have too many click listeners to handle, i didn`t added any dependency Injection libs
         findViewById(R.id.btn_create_product_one).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,16 +70,15 @@ public class CreateProductsActivity extends AppCompatActivity {
             is.close();
             json = new String(buffer, "UTF-8");
             productsArray = new Gson().fromJson(json, Products.class);
-            Log.d(TAG, "Products length " + productsArray.getData().length);
-            Log.d(TAG, "Products " + productsArray.getData()[0].getName());
-            Log.d(TAG, "Products " + productsArray.getData()[1].getName());
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-
+    private void insertRecordsToDb() {
+        new InsertRecordsToDb().execute();
+    }
 
     /*
      * Method: To insert records into database (Room)
@@ -117,10 +114,6 @@ public class CreateProductsActivity extends AppCompatActivity {
             Toast.makeText(mActivity, "Added 3 products from JSON successfully", Toast.LENGTH_SHORT).show();
             finish();
         }
-    }
-
-    private void insertRecordsToDb() {
-        new InsertRecordsToDb().execute();
     }
 
 }

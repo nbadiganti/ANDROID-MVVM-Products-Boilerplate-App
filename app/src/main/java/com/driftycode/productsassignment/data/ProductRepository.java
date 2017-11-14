@@ -1,7 +1,5 @@
 package com.driftycode.productsassignment.data;
 
-import android.arch.lifecycle.LiveData;
-
 import java.util.List;
 
 import javax.inject.Inject;

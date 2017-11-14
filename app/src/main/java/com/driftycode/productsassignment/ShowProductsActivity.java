@@ -2,25 +2,21 @@ package com.driftycode.productsassignment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.driftycode.productsassignment.adapters.ProductsListAdapter;
 import com.driftycode.productsassignment.base.ProductsApplication;
 import com.driftycode.productsassignment.data.ProductTableModel;
 import com.driftycode.productsassignment.data.ProductsDatabase;
+import com.driftycode.productsassignment.views.CustomDialogFragment;
 
 import java.util.List;
 
@@ -58,33 +54,15 @@ public class ShowProductsActivity extends AppCompatActivity {
     /*
      * Method: To load photo into the imageview dynamically and show in the alert dialog
      */
-    public void loadPhoto(ImageView imageView) {
+    public void loadPhoto(String imageUrl) {
 
-        ImageView tempImageView = imageView;
-        AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.image_large_view,
-                (ViewGroup) findViewById(R.id.layout_root));
-        ImageView image = (ImageView) layout.findViewById(R.id.fullimage);
-        image.setImageDrawable(tempImageView.getDrawable());
-        imageDialog.setView(layout);
-        imageDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-
-        });
-
-        imageDialog.create();
-        imageDialog.show();
-    }
-
-    public void loadPhotoToFullView(ImageView imageView) {
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-//        getSupportActionBar().hide();
+        FragmentManager fm = getSupportFragmentManager();
+        CustomDialogFragment dFragment = new CustomDialogFragment();
+        // Show DialogFragment
+        Bundle bundle = new Bundle();
+        bundle.putString("imageUrl", imageUrl);
+        dFragment.setArguments(bundle);
+        dFragment.show(fm, "Dialog Fragment");
     }
 
     /*
@@ -93,6 +71,7 @@ public class ShowProductsActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private class AsycRecordsFromDB extends AsyncTask<Void, Integer, Integer> {
         List<ProductTableModel> products;
+
         @Override
         protected Integer doInBackground(Void... voids) {
             int productsLength = 0;
@@ -120,7 +99,6 @@ public class ShowProductsActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
 }

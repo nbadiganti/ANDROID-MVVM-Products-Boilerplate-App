@@ -2,7 +2,6 @@ package com.driftycode.productsassignment.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -33,28 +32,6 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
     private static List<ProductTableModel> products;
     private static Context context;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView mTextView, mTextActualPrice, mTextRegularPrice, description;
-        ImageView editImageView, deleteImageView, coverImageView;
-
-        ViewHolder(View v) {
-            super(v);
-            mTextView = v.findViewById(R.id.tv_product_name);
-            description = v.findViewById(R.id.tv_product_description);
-            mTextRegularPrice = v.findViewById(R.id.tv_product_regular_price);
-//            editImageView = v.findViewById(R.id.editImageView);
-            deleteImageView = v.findViewById(R.id.deleteImageView);
-            coverImageView = v.findViewById(R.id.coverImageView);
-
-            // To strike out the price
-            mTextActualPrice = v.findViewById(R.id.tv_product_actual_price);
-            mTextActualPrice.setPaintFlags(mTextActualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-
-        }
-    }
-
     public ProductsListAdapter(Context context, List<ProductTableModel> products) {
         ProductsListAdapter.products = products;
         ProductsListAdapter.context = context;
@@ -71,8 +48,6 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
         holder.mTextView.setText(products.get(position).getName());
         holder.description.setText(products.get(position).getDescription());
         holder.mTextActualPrice.setText("$ " + products.get(position).getRegular_price() + "");
@@ -94,7 +69,8 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
         holder.coverImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ShowProductsActivity) context).loadPhoto(holder.coverImageView, 300, 400);
+                String photoUrl = products.get(holder.getLayoutPosition()).getProduct_photo();
+                ((ShowProductsActivity) context).loadPhoto(photoUrl);
             }
         });
 
@@ -103,6 +79,9 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
 
     }
 
+    /*
+     * Method: void - delete the item from local database
+     */
     @SuppressLint("StaticFieldLeak")
     private void deleteItemFromDb(final ProductTableModel productTableModel) {
         ProductsApplication productsApplication = (ProductsApplication) context.getApplicationContext();
@@ -127,6 +106,7 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
             Log.d(TAG, "Unable to delete the item");
     }
 
+    // Dynamically loading image from url to imageview
     private void loadImageFromUrlToImageView(final ImageView imageView, String imageUri) {
 
         if (imageUri != null) {
@@ -144,6 +124,27 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
     @Override
     public int getItemCount() {
         return products.size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView mTextView, mTextActualPrice, mTextRegularPrice, description;
+        ImageView deleteImageView, coverImageView;
+
+        ViewHolder(View v) {
+            super(v);
+            mTextView = v.findViewById(R.id.tv_product_name);
+            description = v.findViewById(R.id.tv_product_description);
+            mTextRegularPrice = v.findViewById(R.id.tv_product_regular_price);
+            deleteImageView = v.findViewById(R.id.deleteImageView);
+            coverImageView = v.findViewById(R.id.coverImageView);
+
+            // To strike out the price
+            mTextActualPrice = v.findViewById(R.id.tv_product_actual_price);
+            mTextActualPrice.setPaintFlags(mTextActualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+
+        }
     }
 }
 

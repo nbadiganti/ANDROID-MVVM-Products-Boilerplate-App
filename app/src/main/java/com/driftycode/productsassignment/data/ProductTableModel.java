@@ -7,9 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 
 import com.driftycode.productsassignment.utils.DateConverter;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by nagendra on 12/11/17.
  */
@@ -33,6 +30,16 @@ public class ProductTableModel {
     @ColumnInfo(name = "updated_date")
     private String updatedDate;
 
+
+    public ProductTableModel(String name, String description, int regular_price, int sale_price, String product_photo, String colors, String updatedDate) {
+        this.name = name;
+        this.description = description;
+        this.regular_price = regular_price;
+        this.sale_price = sale_price;
+        this.product_photo = product_photo;
+        this.colors = colors;
+        this.updatedDate = updatedDate;
+    }
 
     public int getId() {
         return id;
@@ -95,16 +102,6 @@ public class ProductTableModel {
     }
 
     public void setUpdatedDate(String updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
-    public ProductTableModel(String name, String description, int regular_price, int sale_price, String product_photo, String colors, String updatedDate) {
-        this.name = name;
-        this.description = description;
-        this.regular_price = regular_price;
-        this.sale_price = sale_price;
-        this.product_photo = product_photo;
-        this.colors = colors;
         this.updatedDate = updatedDate;
     }
 

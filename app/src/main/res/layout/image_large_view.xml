@@ -1,18 +1,33 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_root"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:layout_height="fill_parent">
 
-    <ImageView
-        android:id="@+id/fullimage"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <LinearLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:background="@android:color/white"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/custom_fullimage_placename"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:textColor="#FFF" />
-</LinearLayout>
+        <ImageView
+            android:id="@+id/fullimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_close"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignRight="@+id/relativeLayout1"
+        android:layout_alignTop="@+id/relativeLayout1"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/close_icon" />
+
+</RelativeLayout>

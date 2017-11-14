@@ -29,27 +29,6 @@ public class Products {
 
         private Stores[] stores;
 
-        private class Stores {
-            private String stores;
-            private String adress1;
-
-            public String getStores() {
-                return stores;
-            }
-
-            public void setStores(String stores) {
-                this.stores = stores;
-            }
-
-            public String getAdress1() {
-                return adress1;
-            }
-
-            public void setAdress1(String adress1) {
-                this.adress1 = adress1;
-            }
-        }
-
         public int getId() {
             return id;
         }
@@ -112,6 +91,27 @@ public class Products {
 
         public void setStores(Stores[] stores) {
             this.stores = stores;
+        }
+
+        private class Stores {
+            private String stores;
+            private String adress1;
+
+            public String getStores() {
+                return stores;
+            }
+
+            public void setStores(String stores) {
+                this.stores = stores;
+            }
+
+            public String getAdress1() {
+                return adress1;
+            }
+
+            public void setAdress1(String adress1) {
+                this.adress1 = adress1;
+            }
         }
     }
 }
