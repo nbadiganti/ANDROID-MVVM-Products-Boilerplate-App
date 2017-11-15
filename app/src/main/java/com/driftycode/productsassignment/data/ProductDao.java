@@ -1,5 +1,6 @@
 package com.driftycode.productsassignment.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -18,14 +19,14 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface ProductDao {
 
     @Query("SELECT * FROM products")
-    public List<ProductTableModel> getProducts();
+    LiveData<List<ProductTableModel>> getProducts();
 
     @Insert(onConflict = REPLACE)
-    public void insertProduct(ProductTableModel productItem);
+    void insertProduct(ProductTableModel productItem);
 
     @Delete
-    public void deleteProduct(ProductTableModel product);
+    void deleteProduct(ProductTableModel product);
 
     @Update
-    public void updateProduct(ProductTableModel product);
+    void updateProduct(ProductTableModel product);
 }

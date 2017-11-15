@@ -2,18 +2,21 @@ package com.driftycode.productsassignment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.driftycode.productsassignment.base.ProductsApplication;
 import com.driftycode.productsassignment.data.ProductTableModel;
 import com.driftycode.productsassignment.data.ProductsDatabase;
+import com.driftycode.productsassignment.models.Product;
 import com.driftycode.productsassignment.models.Products;
+import com.driftycode.productsassignment.viewmodels.DataViewModel;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -30,6 +33,7 @@ public class CreateProductsActivity extends AppCompatActivity {
     Products productsArray;
     private Activity mActivity;
     private ProductsDatabase database;
+    private DataViewModel viewModel;
 
 
     @Override
@@ -39,10 +43,7 @@ public class CreateProductsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mActivity = this;
-
-        // Application context - For room instance
-        ProductsApplication productsApplication = (ProductsApplication) getApplication();
-        database = productsApplication.getRoomInstance();
+        viewModel = ViewModelProviders.of(this).get(DataViewModel.class);
 
         // Loading productions from JSON dynamically
         loadProductsInfoFromJSON();
@@ -51,17 +52,16 @@ public class CreateProductsActivity extends AppCompatActivity {
         findViewById(R.id.btn_create_product_one).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertRecordsToDb();
+                insertRecordsUsingViewModel();
             }
         });
     }
-
 
     /*
      * Method: To read JSON file from assets
      */
     private void loadProductsInfoFromJSON() {
-        String json = null;
+        String json;
         try {
             InputStream is = getAssets().open("products.json");
             int size = is.available();
@@ -76,44 +76,32 @@ public class CreateProductsActivity extends AppCompatActivity {
         }
     }
 
-    private void insertRecordsToDb() {
-        new InsertRecordsToDb().execute();
-    }
 
-    /*
-     * Method: To insert records into database (Room)
-     */
-    @SuppressLint("StaticFieldLeak")
-    private class InsertRecordsToDb extends AsyncTask<Void, Integer, Integer> {
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            if (productsArray != null && productsArray.data.length > 0) {
-                // insert into to room db
-                @SuppressLint("SimpleDateFormat")
-                SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");
+    private void insertRecordsUsingViewModel() {
+        if (productsArray != null && productsArray.data.length > 0) {
+            // insert into to room db
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyyMMddHHmmssSS");
 
-                Date myDate = new Date();
-                String insertedProductDate = timeStampFormat.format(myDate);
+            Date myDate = new Date();
+            String insertedProductDate = timeStampFormat.format(myDate);
 
-                for (Products.Product productItem :
-                        productsArray.data) {
-                    String colorsArrayString = convertListToString(productItem.getColors());
-                    ProductTableModel productTableModel = new ProductTableModel(productItem.getName(), productItem.getDescription(), productItem.getRegular_price(), productItem.getSale_price(), productItem.getProduct_photo(), colorsArrayString, insertedProductDate);
-                    database.productDao().insertProduct(productTableModel);
-                }
-                if (database != null) {
-                    List<ProductTableModel> products = database.productDao().getProducts();
-                    Log.d(TAG, "*** Products Length " + products.size());
-                }
+            for (Product productItem : productsArray.data) {
+                String colorsArrayString = convertListToString(productItem.getColors());
+                ProductTableModel productTableModel = new ProductTableModel(productItem.getName(), productItem.getDescription(), productItem.getRegular_price(), productItem.getSale_price(), productItem.getProduct_photo(), colorsArrayString, insertedProductDate);
+                viewModel.insertProducts(productTableModel);
             }
-            assert productsArray != null;
-            return productsArray.data.length;
-        }
+            viewModel.getProducts().observe(CreateProductsActivity.this, new Observer<List<ProductTableModel>>() {
+                @Override
+                public void onChanged(@Nullable List<ProductTableModel> productTableModels) {
+                    Log.d(TAG, "*** Products Length " + ((productTableModels != null) ? productTableModels.size() : "0"));
+                }
+            });
+            Toast.makeText(this, "Inserted 3 Items successfully to Database", Toast.LENGTH_SHORT).show();
 
-        protected void onPostExecute(Integer result) {
-            Toast.makeText(mActivity, "Added 3 products from JSON successfully", Toast.LENGTH_SHORT).show();
             finish();
+        } else {
+            loadProductsInfoFromJSON();
         }
     }
-
 }

@@ -1,9 +1,10 @@
 package com.driftycode.productsassignment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,9 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.driftycode.productsassignment.adapters.ProductsListAdapter;
-import com.driftycode.productsassignment.base.ProductsApplication;
 import com.driftycode.productsassignment.data.ProductTableModel;
 import com.driftycode.productsassignment.data.ProductsDatabase;
+import com.driftycode.productsassignment.viewmodels.DataViewModel;
 import com.driftycode.productsassignment.views.CustomDialogFragment;
 
 import java.util.List;
@@ -29,76 +30,56 @@ public class ShowProductsActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private Activity activity;
     private TextView tv_no_products;
+    private DataViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_products);
 
+        tv_no_products = findViewById(R.id.tv_no_products_available);
         mRecyclerView = findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        activity = this;
 
-        tv_no_products = findViewById(R.id.tv_no_products_available);
+        activity = this;
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Application context to perform Room DB calls
-        ProductsApplication productsApplication = (ProductsApplication) getApplication();
-        database = productsApplication.getRoomInstance();
-        new AsycRecordsFromDB().execute();
+        viewModel = ViewModelProviders.of(this).get(DataViewModel.class);
+        viewModel.getProducts().observe(this, new Observer<List<ProductTableModel>>() {
+            @Override
+            public void onChanged(@Nullable List<ProductTableModel> products) {
+                if (products != null) {
+                    int productsLength = products.size();
+                    if (productsLength > 0) {
+                        tv_no_products.setVisibility(View.INVISIBLE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mAdapter = new ProductsListAdapter(activity, products);
+                        mRecyclerView.setAdapter(mAdapter);
+                    } else {
+                        tv_no_products.setVisibility(View.VISIBLE);
+                        mRecyclerView.setVisibility(View.INVISIBLE);
+                        Log.d(TAG, "No items found");
+                    }
+                    Log.d(TAG, "Product Length " + products.size());
+                } else {
+                    tv_no_products.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     /*
      * Method: To load photo into the imageview dynamically and show in the alert dialog
      */
     public void loadPhoto(String imageUrl) {
-
         FragmentManager fm = getSupportFragmentManager();
         CustomDialogFragment dFragment = new CustomDialogFragment();
-        // Show DialogFragment
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl", imageUrl);
         dFragment.setArguments(bundle);
         dFragment.show(fm, "Dialog Fragment");
     }
-
-    /*
-     * Method: To fetch records from ROOM database
-     */
-    @SuppressLint("StaticFieldLeak")
-    private class AsycRecordsFromDB extends AsyncTask<Void, Integer, Integer> {
-        List<ProductTableModel> products;
-
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            int productsLength = 0;
-            if (database != null) {
-                products = database.productDao().getProducts();
-                Log.d(TAG, "*** Products Length " + products.size());
-                productsLength = products.size();
-                for (ProductTableModel productItem : products) {
-                    Log.d(TAG, "Product item " + productItem.getName());
-                    Log.d(TAG, "Product item " + productItem.getDescription());
-                }
-            }
-            return productsLength;
-        }
-
-        protected void onPostExecute(Integer result) {
-            // specify an adapter (see also next example)
-            if (result > 0) {
-                tv_no_products.setVisibility(View.INVISIBLE);
-                mAdapter = new ProductsListAdapter(activity, products);
-                mRecyclerView.setAdapter(mAdapter);
-            } else {
-                tv_no_products.setVisibility(View.VISIBLE);
-                Log.d(TAG, "No items found");
-            }
-        }
-    }
-
-
 }

@@ -1,9 +1,8 @@
 package com.driftycode.productsassignment.adapters;
 
-import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +16,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.driftycode.productsassignment.R;
 import com.driftycode.productsassignment.ShowProductsActivity;
-import com.driftycode.productsassignment.base.ProductsApplication;
 import com.driftycode.productsassignment.data.ProductTableModel;
-import com.driftycode.productsassignment.data.ProductsDatabase;
+import com.driftycode.productsassignment.viewmodels.DataViewModel;
 
 import java.util.List;
 
@@ -31,10 +29,12 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
     private static final String TAG = "Recycleview";
     private static List<ProductTableModel> products;
     private static Context context;
+    private DataViewModel viewModel;
 
     public ProductsListAdapter(Context context, List<ProductTableModel> products) {
         ProductsListAdapter.products = products;
         ProductsListAdapter.context = context;
+        viewModel = ViewModelProviders.of((ShowProductsActivity) context).get(DataViewModel.class);
 
     }
 
@@ -60,8 +60,12 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
                 Log.d(TAG, holder.getLayoutPosition() + "");
 
                 Log.d(TAG, products.get(holder.getLayoutPosition()) + "");
-                deleteItemFromDb(products.get(holder.getLayoutPosition()));
+                // viewmodel call to delete item from local database
+                viewModel.deleteProducts(products.get(holder.getLayoutPosition()));
                 products.remove(holder.getLayoutPosition());
+                Log.d(TAG, "Deleted item successfully");
+                notifyDataSetChanged();
+                Toast.makeText(context, "Deleted Item successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -77,33 +81,6 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
         // loading image from url
         loadImageFromUrlToImageView(holder.coverImageView, products.get(position).getProduct_photo());
 
-    }
-
-    /*
-     * Method: void - delete the item from local database
-     */
-    @SuppressLint("StaticFieldLeak")
-    private void deleteItemFromDb(final ProductTableModel productTableModel) {
-        ProductsApplication productsApplication = (ProductsApplication) context.getApplicationContext();
-        final ProductsDatabase database = productsApplication.getRoomInstance();
-        if (database != null) {
-            new AsyncTask<Void, Void, Integer>() {
-                @Override
-                protected Integer doInBackground(Void... params) {
-                    database.productDao().deleteProduct(productTableModel);
-                    return 1;
-                }
-
-                @Override
-                protected void onPostExecute(Integer agentsCount) {
-                    Log.d(TAG, "Deleted item successfully");
-                    notifyDataSetChanged();
-                    Toast.makeText(context, "Deleted Item successfully", Toast.LENGTH_SHORT).show();
-                }
-            }.execute();
-
-        } else
-            Log.d(TAG, "Unable to delete the item");
     }
 
     // Dynamically loading image from url to imageview

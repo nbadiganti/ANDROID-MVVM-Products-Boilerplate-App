@@ -2,6 +2,7 @@ package com.driftycode.productsassignment.base;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 
 import com.driftycode.productsassignment.data.ProductsDatabase;
 
@@ -11,12 +12,12 @@ import com.driftycode.productsassignment.data.ProductsDatabase;
 
 public class ProductsApplication extends Application {
 
+    private static ProductsDatabase database;
     private ProductsApplication applicationContext;
-    private ProductsDatabase database;
 
     // Database initialization for the application
-    public ProductsDatabase getRoomInstance() {
-        database = Room.databaseBuilder(getApplicationContext(),
+    public static ProductsDatabase getRoomInstance(Context applicationContext) {
+        database = Room.databaseBuilder(applicationContext,
                 ProductsDatabase.class, "Products.db")
                 .build();
         return database;
