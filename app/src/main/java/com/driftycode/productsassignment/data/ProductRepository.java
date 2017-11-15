@@ -15,7 +15,7 @@ public class ProductRepository {
     private final ProductDao productDao;
 
     @Inject
-    private ProductRepository(ProductDao productDao) {
+    public ProductRepository(ProductDao productDao) {
         this.productDao = productDao;
     }
 
